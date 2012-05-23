@@ -179,3 +179,18 @@ Get the source code:
 		echo "$article->title was written by $article->author->realName\n";
 	}
 	```
+
+## Debugging
+
+The code below enables the debug bar panel and better error visualization.
+
+	```php
+	use Nette\Database\Diagnostics\ConnectionPanel;
+	use Nette\Diagnostics\Debugger;
+
+	$panel = new ConnectionPanel();
+	$container->connection->onQuery[] = callback($panel, 'logQuery');
+
+	Debugger::$blueScreen->addPanel('Nette\Database\Diagnostics\ConnectionPanel::renderException');
+	Debugger::$bar->addPanel($panel);
+	```
