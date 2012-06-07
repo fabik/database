@@ -5,16 +5,23 @@ This is a database layer for Nette Framework based on `Nette\Database`.
 
 ## Installation
 
-Get the source code:
-* Copy `Database` to your libs directory.
-* Add `"fabik/database": "0.1.*"` to your `composer.json`.
+Get the source code using [Composer](http://getcomposer.org/) (add `"fabik/database": "0.2.*"` to your `composer.json`) or directly download `Database` to your libs directory.
 
 ## Example of use
 
 1. Create the database:
 
 	```mysql
-	SET foreign_key_checks = 0;
+	CREATE TABLE `users` (
+		`id` int unsigned NOT NULL AUTO_INCREMENT,
+		`username` varchar(255) NOT NULL,
+		`password` char(40) NOT NULL,
+		`email` varchar(255) NOT NULL,
+		`firstname` varchar(255) NOT NULL,
+		`surname` varchar(255) NOT NULL,
+		PRIMARY KEY (`id`),
+		UNIQUE KEY (`username`)
+	) ENGINE=InnoDB;
 
 	CREATE TABLE `articles` (
 		`id` int unsigned NOT NULL AUTO_INCREMENT,
@@ -23,43 +30,31 @@ Get the source code:
 		`author_id` int unsigned NOT NULL,
 		PRIMARY KEY (`id`),
 		KEY (`author_id`),
-		FOREIGN KEY (`author_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-	) ENGINE=InnoDB;
-
-	CREATE TABLE `users` (
-		`id` int unsigned NOT NULL AUTO_INCREMENT,
-		`name` varchar(255) NOT NULL,
-		`password` char(40) NOT NULL,
-		`email` varchar(255) NOT NULL,
-		`firstname` varchar(255) NOT NULL,
-		`surname` varchar(255) NOT NULL,
-		PRIMARY KEY (`id`),
-		UNIQUE KEY (`name`)
+		FOREIGN KEY (`author_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 	) ENGINE=InnoDB;
 	```
 
 2. Add the following sections to your `config.neon` file:
 
 	```neon
-	parameters:
+	nette:
 		database:
-			dsn: 'mysql:host=localhost;dbname=test'
-			user: user
-			password: password
+			default:
+				dsn: '%database.driver%:host=%database.host%;dbname=%database.dbname%'
+				user: %database.user%
+				password: %database.password%
 
 	services:
-		connection:
-			class: Database\Model\Connection(%database.dsn%, %database.user%, %database.password%)
-			setup:
-				- setCacheStorage(@cacheStorage)
-				- setDatabaseReflection(Nette\Database\Reflection\DiscoveredReflection(@cacheStorage))
-				- setRowClasses({
-					articles: Blog\Article,
-					users: Blog\User
-				})
+		# database
+		modelManager: Database\ModelManager
+		rowFactory: Database\RowFactory({
+			articles: Blog\Article
+			users: Blog\User
+		})
 
-		articles: Blog\Articles(articles, @connection)
-		users: Blog\Users(users, @connection)
+		# models
+		articles: Blog\Articles
+		users: Blog\Users
 	```
 
 4. Create classes for rows (e.g. `Article`, `User`) and tables (e.g. `Articles`, `Users`):
@@ -68,69 +63,26 @@ Get the source code:
 	<?php
 
 	namespace Blog;
+	use Database\ActiveRow,
+		Database\Table;
 
-	use Database\Model\ActiveRow;
 
 
-
-	/**
-	 * @property int $id
-	 * @property string $title
-	 * @property string $content
-	 * @property int $author_id
-	 * @property User $author
-	 */
 	class Article extends ActiveRow
 	{
 	}
 
-	```
-
-	```php
-	<?php
-
-	namespace Blog;
-
-	use Database\Model\Table;
 
 
-
-	/**
-	 * @method Article[]|\Database\Model\Selection findAll()
-	 * @method Article[]|\Database\Model\Selection findBy(array $by)
-	 * @method Article[]|\Database\Model\Selection|FALSE find($key)
-	 * @method Article[]|\Database\Model\Selection|FALSE findOneBy(array $by)
-	 */
 	class Articles extends Table
 	{
 	}
 
-	```
-
-	```php
-	<?php
-
-	namespace Blog;
-
-	use Database\Model\ActiveRow;
 
 
-
-	/**
-	 * @property int $id
-	 * @property string $name
-	 * @property string $password
-	 * @property string $firstname
-	 * @property string $surname
-	 * @property string $role
-	 * @property string $realName
-	 */
 	class User extends ActiveRow
 	{
-		/**
-		 * Gets the real name.
-		 * @return string
-		 */
+		/** @return string */
 		public function getRealName()
 		{
 			return "$this->firstname $this->surname";
@@ -138,34 +90,15 @@ Get the source code:
 
 
 
-		/**
-		 * Sets the real name.
-		 * @param string
-		 * @return void
-		 */
+		/** @param string */
 		public function setRealName($realName)
 		{
 			list($this->firstname, $this->surname) = explode(' ', $realName);
 		}
 	}
 
-	```
-
-	```php
-	<?php
-
-	namespace Blog;
-
-	use Database\Model\Table;
 
 
-
-	/**
-	 * @method User[]|\Database\Model\Selection findAll()
-	 * @method User[]|\Database\Model\Selection findBy(array $by)
-	 * @method User[]|\Database\Model\Selection|FALSE find($key)
-	 * @method User[]|\Database\Model\Selection|FALSE findOneBy(array $by)
-	 */
 	class Users extends Table
 	{
 	}
@@ -175,22 +108,9 @@ Get the source code:
 5. Now you can use it as follows:
 
 	```php
-	foreach ($container->articles->findAll() as $article) {
+	$articles = $container->articles;
+
+	foreach ($articles->findAll() as $article) {
 		echo "$article->title was written by $article->author->realName\n";
 	}
 	```
-
-## Debugging
-
-The code below enables the debug bar panel and better error visualization.
-
-```php
-use Nette\Database\Diagnostics\ConnectionPanel;
-use Nette\Diagnostics\Debugger;
-
-$panel = new ConnectionPanel();
-$container->connection->onQuery[] = callback($panel, 'logQuery');
-
-Debugger::$blueScreen->addPanel('Nette\Database\Diagnostics\ConnectionPanel::renderException');
-Debugger::$bar->addPanel($panel);
-```
