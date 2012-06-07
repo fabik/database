@@ -1,6 +1,6 @@
 {
 	"name": "fabik/database",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"description": "Database layer for Nette Framework.",
 	"keywords": ["database", "nette"],
 	"homepage": "http://github.com/fabik/database",
@@ -13,6 +13,6 @@
 	],
 	"require": {
 		"php" : ">=5.3.2",
-		"nette/nette": "2.0.*"
+		"nette/nette": "2.1.*"
 	}
 }
