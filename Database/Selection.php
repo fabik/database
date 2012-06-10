@@ -89,7 +89,7 @@ class Selection extends \Nette\Database\Table\Selection implements IModelManager
 	{
 		$referencing = & $this->referencing["$table:$column"];
 		if (!$referencing || $forceNewInstance) {
-			$referencing = $this->createGroupedSelection($table, $this, $column); // HACK
+			$referencing = $this->createGroupedSelection($table, $column); // HACK
 		}
 
 		$this->execute(); // HACK

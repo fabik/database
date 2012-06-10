@@ -191,7 +191,7 @@ class GroupedSelection extends \Nette\Database\Table\GroupedSelection implements
 	{
 		$referencing = & $this->referencing["$table:$column"];
 		if (!$referencing || $forceNewInstance) {
-			$referencing = $this->createGroupedSelection($table, $this, $column); // HACK
+			$referencing = $this->createGroupedSelection($table, $column); // HACK
 		}
 
 		$this->execute(); // HACK
