@@ -164,19 +164,21 @@ class GroupedSelection extends \Nette\Database\Table\GroupedSelection implements
 	 * Returns referencing rows.
 	 * @param  string
 	 * @param  string
-	 * @param  int  primary key
-	 * @param  bool force new instance
+	 * @param  int primary key
 	 * @return Nette\Database\Table\GroupedSelection
 	 */
-	public function getReferencingTable($table, $column, $active = NULL, $forceNewInstance = FALSE)
+	public function getReferencingTable($table, $column, $active = NULL)
 	{
-		$referencing = & $this->referencing["$table:$column"];
-		if (!$referencing || $forceNewInstance) {
-			$referencing = $this->createGroupedSelectionInstance($table, $column); // HACK
+		$prototype = & $this->getRefTable($refPath)->referencingPrototype[$refPath . "$table.$column"];
+		if (!$prototype) {
+			$prototype = $this->createGroupedSelectionInstance($table, $column);
+			$this->execute(); // HACK
+			$prototype->where("$table.$column", array_keys((array) $this->data)); // HACK
 		}
 
-		$this->execute(); // HACK
-		return $referencing->setActive($active)->where("$table.$column", array_keys((array) $this->data)); // HACK
+		$clone = clone $prototype;
+		$clone->setActive($active);
+		return $clone;
 	}
 
 
