@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * Database layer for Nette Framework based on Nette\Database.
  *
  * @author     Jan-Sebastian Fabík
