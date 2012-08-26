@@ -114,25 +114,6 @@ class GroupedSelection extends \Nette\Database\Table\GroupedSelection implements
 
 
 
-	public function insert($data)
-	{
-		if ($data instanceof \Traversable && !$data instanceof \Nette\Database\Table\Selection) {
-			$data = iterator_to_array($data);
-		}
-
-		if (\Nette\Utils\Validators::isList($data)) {
-			foreach (array_keys($data) as $key) {
-				$data[$key][$this->column] = $this->active;
-			}
-		} else {
-			$data[$this->column] = $this->active;
-		}
-
-		return $this->_insert($data); // HACK
-	}
-
-
-
 	protected function execute()
 	{
 		if ($this->rows !== NULL) {
@@ -196,40 +177,6 @@ class GroupedSelection extends \Nette\Database\Table\GroupedSelection implements
 
 		$this->execute(); // HACK
 		return $referencing->setActive($active)->where("$table.$column", array_keys((array) $this->data)); // HACK
-	}
-
-
-
-	/**
-	 * Inserts row in a table.
-	 * @param  mixed array($column => $value)|Traversable for single row insert or Nette\Database\Table\Selection|string for INSERT ... SELECT
-	 * @return Nette\Database\Table\ActiveRow or FALSE in case of an error or number of affected rows for INSERT ... SELECT
-	 */
-	public function _insert($data)
-	{
-		if ($data instanceof \Nette\Database\Table\Selection) {
-			$data = $data->getSql();
-
-		} elseif ($data instanceof \Traversable) {
-			$data = iterator_to_array($data);
-		}
-
-		$return = $this->connection->query("INSERT INTO $this->delimitedName", $data);
-
-		if (!is_array($data)) {
-			return $return->rowCount();
-		}
-
-		$this->checkReferenceNewKeys = TRUE;
-
-		if (!isset($data[$this->primary]) && ($id = $this->connection->lastInsertId())) {
-			$data[$this->primary] = $id;
-			return $this->rows[$id] = $this->createRow($data); // HACK
-
-		} else {
-			return $this->createRow($data); // HACK
-
-		}
 	}
 
 
