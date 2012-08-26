@@ -63,7 +63,7 @@ class GroupedSelection extends \Nette\Database\Table\GroupedSelection implements
 	 */
 	protected function createSelectionInstance($table = NULL)
 	{
-		return new Selection($table, $this->manager);
+		return new Selection($table ?: $this->name, $this->manager);
 	}
 
 
@@ -85,58 +85,35 @@ class GroupedSelection extends \Nette\Database\Table\GroupedSelection implements
 
 
 
-	public function aggregation($function)
-	{
-		$aggregation = & $this->aggregation[$function . implode('', $this->where) . implode('', $this->conditions)];
-		if ($aggregation === NULL) {
-			$aggregation = array();
-
-			$selection = $this->createSelectionInstance($this->name); // HACK
-			$selection->where = $this->where;
-			$selection->parameters = $this->parameters;
-			$selection->conditions = $this->conditions;
-
-			$selection->select($function);
-			$selection->select("{$this->name}.{$this->column}");
-			$selection->group("{$this->name}.{$this->column}");
-
-			foreach ($selection as $row) {
-				$aggregation[$row[$this->column]] = $row;
-			}
-		}
-
-		if (isset($aggregation[$this->active])) {
-			foreach ($aggregation[$this->active] as $val) {
-				return $val;
-			}
-		}
-	}
-
-
-
 	protected function execute()
 	{
 		if ($this->rows !== NULL) {
 			return;
 		}
 
-		$hash = md5($this->getSql() . json_encode($this->parameters));
-		$referencing = & $this->referencing[$hash];
-		if ($referencing === NULL) {
-			$limit = $this->limit;
+		$hash = md5($this->sqlBuilder->getSql() . json_encode($this->sqlBuilder->getParameters()));
+
+		$referencing = & $this->getRefTable($refPath)->referencing[$refPath . $hash];
+		$this->rows = & $referencing['rows'];
+		$this->referenced = & $referencing['refs'];
+		$this->accessed = & $referencing['accessed'];
+		$refData = & $referencing['data'];
+
+		if ($refData === NULL) {
+			$limit = $this->sqlBuilder->getLimit();
 			$this->refTable->execute(); // HACK
 			$rows = count($this->refTable->data); // HACK
-			if ($this->limit && $rows > 1) {
-				$this->limit = NULL;
+			if ($limit && $rows > 1) {
+				$this->sqlBuilder->limit(NULL, NULL);
 			}
 			$this->_execute(); // HACK
-			$this->limit = $limit;
-			$referencing = array();
+			$this->sqlBuilder->limit($limit, NULL);
+			$refData = array();
 			$offset = array();
 			foreach ($this->rows as $key => $row) {
-				$ref = & $referencing[$row[$this->column]];
+				$ref = & $refData[$row[$this->column]];
 				$skip = & $offset[$row[$this->column]];
-				if ($limit === NULL || $rows <= 1 || (count($ref) < $limit && $skip >= $this->offset)) {
+				if ($limit === NULL || $rows <= 1 || (count($ref) < $limit && $skip >= $this->sqlBuilder->getOffset())) {
 					$ref[$key] = $row;
 				} else {
 					unset($this->rows[$key]);
@@ -146,10 +123,13 @@ class GroupedSelection extends \Nette\Database\Table\GroupedSelection implements
 			}
 		}
 
-		$this->data = & $referencing[$this->active];
+		$this->data = & $refData[$this->active];
 		if ($this->data === NULL) {
 			$this->data = array();
 		} else {
+			foreach ($this->data as $row) {
+				$row->setTable($this); // injects correct parent GroupedSelection
+			}
 			reset($this->data);
 		}
 	}
@@ -185,7 +165,7 @@ class GroupedSelection extends \Nette\Database\Table\GroupedSelection implements
 
 	/**
 	 * Executes built query.
-	 * @return NULL
+	 * @return void
 	 */
 	protected function _execute()
 	{
@@ -193,14 +173,16 @@ class GroupedSelection extends \Nette\Database\Table\GroupedSelection implements
 			return;
 		}
 
+		$this->observeCache = TRUE;
+
 		try {
-			$result = $this->query($this->getSql());
+			$result = $this->query($this->sqlBuilder->getSql());
 
 		} catch (\PDOException $exception) {
-			if (!$this->select && $this->prevAccessed) {
+			if (!$this->sqlBuilder->getSelect() && $this->prevAccessed) {
 				$this->prevAccessed = '';
 				$this->accessed = array();
-				$result = $this->query($this->getSql());
+				$result = $this->query($this->sqlBuilder->getSql());
 			} else {
 				throw $exception;
 			}
