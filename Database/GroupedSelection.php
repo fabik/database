@@ -17,13 +17,13 @@ class GroupedSelection extends \Nette\Database\Table\GroupedSelection implements
 
 
 	/**
-	 * @param  string
 	 * @param  Nette\Database\Table\Selection
 	 * @param  string
+	 * @param  string
 	 */
-	public function __construct($name, \Nette\Database\Table\Selection $refTable, $column)
+	public function __construct(\Nette\Database\Table\Selection $refTable, $name, $column)
 	{
-		parent::__construct($name, $refTable, $column);
+		parent::__construct($refTable, $name, $column);
 		if (!$refTable instanceof IModelManagerAccessor) {
 			throw new \Nette\InvalidArgumentException('Argument $refTable must be a IModelManagerAccessor descendant.');
 		}
@@ -76,7 +76,7 @@ class GroupedSelection extends \Nette\Database\Table\GroupedSelection implements
 	 */
 	protected function createGroupedSelection($table, $column)
 	{
-		return new GroupedSelection($table, $this, $column);
+		return new GroupedSelection($this, $table, $column);
 	}
 
 

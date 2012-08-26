@@ -68,7 +68,7 @@ class Selection extends \Nette\Database\Table\Selection implements IModelManager
 	 */
 	protected function createGroupedSelection($table, $column)
 	{
-		return new GroupedSelection($table, $this, $column);
+		return new GroupedSelection($this, $table, $column);
 	}
 
 
