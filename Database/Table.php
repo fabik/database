@@ -86,7 +86,7 @@ abstract class Table extends Object
 	 */
 	public function find($key)
 	{
-		return $this->getTable()->find($key)->fetch();
+		return $this->getTable()->get($key);
 	}
 
 
