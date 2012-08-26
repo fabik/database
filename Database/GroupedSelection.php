@@ -61,7 +61,7 @@ class GroupedSelection extends \Nette\Database\Table\GroupedSelection implements
 	 * @param  string
 	 * @return Nette\Database\Table\Selection
 	 */
-	protected function createSelection($table)
+	protected function createSelectionInstance($table = NULL)
 	{
 		return new Selection($table, $this->manager);
 	}
@@ -74,7 +74,7 @@ class GroupedSelection extends \Nette\Database\Table\GroupedSelection implements
 	 * @param  string
 	 * @return Nette\Database\Table\GroupedSelection
 	 */
-	protected function createGroupedSelection($table, $column)
+	protected function createGroupedSelectionInstance($table, $column)
 	{
 		return new GroupedSelection($this, $table, $column);
 	}
@@ -91,7 +91,7 @@ class GroupedSelection extends \Nette\Database\Table\GroupedSelection implements
 		if ($aggregation === NULL) {
 			$aggregation = array();
 
-			$selection = $this->createSelection($this->name); // HACK
+			$selection = $this->createSelectionInstance($this->name); // HACK
 			$selection->where = $this->where;
 			$selection->parameters = $this->parameters;
 			$selection->conditions = $this->conditions;
@@ -172,50 +172,11 @@ class GroupedSelection extends \Nette\Database\Table\GroupedSelection implements
 	{
 		$referencing = & $this->referencing["$table:$column"];
 		if (!$referencing || $forceNewInstance) {
-			$referencing = $this->createGroupedSelection($table, $column); // HACK
+			$referencing = $this->createGroupedSelectionInstance($table, $column); // HACK
 		}
 
 		$this->execute(); // HACK
 		return $referencing->setActive($active)->where("$table.$column", array_keys((array) $this->data)); // HACK
-	}
-
-
-
-	/**
-	 * Returns referenced row.
-	 * @param  string
-	 * @param  string
-	 * @param  bool  checks if rows contains the same primary value relations
-	 * @return Nette\Database\Table\Selection or array() if the row does not exist
-	 */
-	public function getReferencedTable($table, $column, $checkReferenceNewKeys = FALSE)
-	{
-		$referenced = & $this->referenced["$table.$column"];
-		if ($referenced === NULL || $checkReferenceNewKeys || $this->checkReferenceNewKeys) {
-			$keys = array();
-			$this->execute();
-			foreach ($this->rows as $row) {
-				if ($row[$column] === NULL)
-					continue;
-
-				$key = $row[$column] instanceof \Nette\Database\Table\ActiveRow ? $row[$column]->getPrimary() : $row[$column];
-				$keys[$key] = TRUE;
-			}
-
-			if ($referenced !== NULL && $keys === array_keys($this->rows)) {
-				$this->checkReferenceNewKeys = FALSE;
-				return $referenced;
-			}
-
-			if ($keys) {
-				$referenced = $this->createSelection($table); // HACK
-				$referenced->where($table . '.' . $referenced->primary, array_keys($keys));
-			} else {
-				$referenced = array();
-			}
-		}
-
-		return $referenced;
 	}
 
 
