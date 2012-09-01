@@ -70,31 +70,4 @@ class Selection extends \Nette\Database\Table\Selection implements IModelManager
 	{
 		return new GroupedSelection($this, $table, $column);
 	}
-
-
-
-	/********** Nette\Database\Table\Selection behaviour **********/
-
-
-
-	/**
-	 * Returns referencing rows.
-	 * @param  string
-	 * @param  string
-	 * @param  int primary key
-	 * @return Nette\Database\Table\GroupedSelection
-	 */
-	public function getReferencingTable($table, $column, $active = NULL)
-	{
-		$prototype = & $this->getRefTable($refPath)->referencingPrototype[$refPath . "$table.$column"];
-		if (!$prototype) {
-			$prototype = $this->createGroupedSelectionInstance($table, $column);
-			$this->execute(); // HACK
-			$prototype->where("$table.$column", array_keys((array) $this->data)); // HACK
-		}
-
-		$clone = clone $prototype;
-		$clone->setActive($active);
-		return $clone;
-	}
 }
