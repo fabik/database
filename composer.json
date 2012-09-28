@@ -1,6 +1,6 @@
 {
 	"name": "fabik/database",
-	"version": "0.2.0",
+	"version": "1.0.0",
 	"description": "Database layer for Nette Framework.",
 	"keywords": ["database", "nette"],
 	"homepage": "http://github.com/fabik/database",
