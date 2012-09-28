@@ -74,16 +74,10 @@ Get the source code using [Composer](http://getcomposer.org/) (add `"fabik/datab
 
 
 
-	class Articles extends Table
-	{
-	}
-
-
-
 	class User extends ActiveRow
 	{
 		/** @return string */
-		public function getRealName()
+		public function getRealname()
 		{
 			return "$this->firstname $this->surname";
 		}
@@ -91,18 +85,25 @@ Get the source code using [Composer](http://getcomposer.org/) (add `"fabik/datab
 
 
 		/** @param string */
-		public function setRealName($realName)
+		public function setRealname($realname)
 		{
-			list($this->firstname, $this->surname) = explode(' ', $realName);
+			list($this->firstname, $this->surname) = explode(' ', $realname);
 		}
+	}
+
+
+
+	class Articles extends Table
+	{
+		protected $name = 'articles';
 	}
 
 
 
 	class Users extends Table
 	{
+		protected $name = 'users';
 	}
-
 	```
 
 5. Now you can use it as follows:
@@ -111,6 +112,6 @@ Get the source code using [Composer](http://getcomposer.org/) (add `"fabik/datab
 	$articles = $container->articles;
 
 	foreach ($articles->findAll() as $article) {
-		echo "$article->title was written by $article->author->realName\n";
+		echo "$article->title was written by $article->author->realname\n";
 	}
 	```
