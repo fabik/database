@@ -5,7 +5,7 @@ This is a database layer for Nette Framework based on `Nette\Database`.
 
 ## Installation
 
-Get the source code using [Composer](http://getcomposer.org/) (add `"fabik/database": "0.2.*"` to your `composer.json`) or directly download `Database` to your libs directory.
+Get the source code using [Composer](http://getcomposer.org/) (add `"fabik/database": "1.*"` to your `composer.json`) or directly download `Database` to your libs directory.
 
 ## Example of use
 
