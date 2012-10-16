@@ -115,6 +115,46 @@ abstract class Table extends Object
 
 
 	/**
+	 * Creates and inserts a row to the database or updates an existing one.
+	 * @param  mixed[]
+	 * @param  mixed[]
+	 * @return ActiveRow
+	 */
+	public function createOrUpdate($uniqueKeys, $values = array())
+	{
+		if ($values) {
+			if ($row = $this->findOneBy($uniqueKeys)) {
+				$row->update($values);
+				return $this->findOneBy($uniqueKeys);
+			} else {
+				return $this->create($uniqueKeys + $values);
+			}
+
+		} else {
+			$connection = $this->manager->getConnection();
+			$driver = $connection->getSupplementalDriver();
+
+			$pairs = array();
+			foreach ($uniqueKeys as $key => $value) {
+				$pairs[] = $driver->delimite($key) . ' = ?';
+			}
+
+			$table = $driver->delimite($this->name);
+			$pairs = implode(', ', $pairs);
+			$values = array_values($uniqueKeys);
+
+			$connection->queryArgs(
+				"INSERT INTO $table SET $pairs ON DUPLICATE KEY UPDATE $pairs",
+				array_merge($values, $values)
+			);
+
+			return $this->findOneBy($uniqueKeys);
+		}
+	}
+
+
+
+	/**
 	 * Inserts a row to the database.
 	 * @param  mixed[]
 	 * @return void
