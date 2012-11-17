@@ -6,13 +6,25 @@
  * @author     Jan-Sebastian Fabík
  */
 
-require __DIR__ . '/exceptions.php';
-require __DIR__ . '/IModelManager.php';
-require __DIR__ . '/IModelManagerAccessor.php';
-require __DIR__ . '/IRowFactory.php';
-require __DIR__ . '/ActiveRow.php';
-require __DIR__ . '/GroupedSelection.php';
-require __DIR__ . '/ModelManager.php';
-require __DIR__ . '/RowFactory.php';
-require __DIR__ . '/Selection.php';
-require __DIR__ . '/Table.php';
+
+
+spl_autoload_register(function ($type) {
+	static $paths = array(
+		'database\activerow' => 'ActiveRow.php',
+		'database\duplicateentryexception' => 'exceptions.php',
+		'database\groupedselection' => 'GroupedSelection.php',
+		'database\imodelmanager' => 'IModelManager.php',
+		'database\imodelmanageraccessor' => 'IModelManagerAccessor.php',
+		'database\irowfactory' => 'IRowFactory.php',
+		'database\modelmanager' => 'ModelManager.php',
+		'database\rowfactory' => 'RowFactory.php',
+		'database\selection' => 'Selection.php',
+		'database\table' => 'Table.php',
+	);
+
+	$type = ltrim(strtolower($type), '\\'); // PHP namespace bug #49143
+
+	if (isset($paths[$type])) {
+		require_once __DIR__ . '/' . $paths[$type];
+	}
+});
