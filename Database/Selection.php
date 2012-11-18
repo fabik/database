@@ -23,7 +23,7 @@ class Selection extends \Nette\Database\Table\Selection implements IModelManager
 	public function __construct($table, IModelManager $manager)
 	{
 		if (NETTE_VERSION_ID >= 20100) {
-			parent::__construct($manager->getConnection(), $table);
+			parent::__construct($manager->getConnection(), $table, $manager->getDatabaseReflection(), $manager->getCacheStorage());
 		} else {
 			parent::__construct($table, $manager->getConnection());
 		}

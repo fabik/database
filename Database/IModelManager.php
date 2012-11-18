@@ -16,4 +16,10 @@ interface IModelManager
 
 	/** @return IRowFactory */
 	function getRowFactory();
+
+	/** @return Nette\Database\IReflection */
+	function getDatabaseReflection();
+
+	/** @return Nette\Caching\IStorage */
+	function getCacheStorage();
 }
