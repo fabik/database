@@ -1,6 +1,6 @@
 <?php
 
-namespace Database;
+namespace Fabik\Database;
 use Nette\ObjectMixin;
 
 

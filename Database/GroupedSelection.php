@@ -1,6 +1,6 @@
 <?php
 
-namespace Database;
+namespace Fabik\Database;
 
 
 
@@ -32,7 +32,7 @@ class GroupedSelection extends \Nette\Database\Table\GroupedSelection implements
 
 
 
-	/********** Database\Selection behaviour **********/
+	/********** Fabik\Database\Selection behaviour **********/
 
 
 

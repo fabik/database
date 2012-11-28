@@ -10,16 +10,16 @@
 
 spl_autoload_register(function ($type) {
 	static $paths = array(
-		'database\activerow' => 'ActiveRow.php',
-		'database\duplicateentryexception' => 'exceptions.php',
-		'database\groupedselection' => 'GroupedSelection.php',
-		'database\imodelmanager' => 'IModelManager.php',
-		'database\imodelmanageraccessor' => 'IModelManagerAccessor.php',
-		'database\irowfactory' => 'IRowFactory.php',
-		'database\modelmanager' => 'ModelManager.php',
-		'database\rowfactory' => 'RowFactory.php',
-		'database\selection' => 'Selection.php',
-		'database\table' => 'Table.php',
+		'fabik\database\activerow' => 'ActiveRow.php',
+		'fabik\database\duplicateentryexception' => 'exceptions.php',
+		'fabik\database\groupedselection' => 'GroupedSelection.php',
+		'fabik\database\imodelmanager' => 'IModelManager.php',
+		'fabik\database\imodelmanageraccessor' => 'IModelManagerAccessor.php',
+		'fabik\database\irowfactory' => 'IRowFactory.php',
+		'fabik\database\modelmanager' => 'ModelManager.php',
+		'fabik\database\rowfactory' => 'RowFactory.php',
+		'fabik\database\selection' => 'Selection.php',
+		'fabik\database\table' => 'Table.php',
 	);
 
 	$type = ltrim(strtolower($type), '\\'); // PHP namespace bug #49143

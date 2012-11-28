@@ -1,6 +1,6 @@
 <?php
 
-namespace Database;
+namespace Fabik\Database;
 use Nette\Object;
 
 
@@ -24,7 +24,7 @@ class RowFactory extends Object implements IRowFactory
 	 * @param  string[]
 	 * @param  string
 	 */
-	public function __construct($classes = array(), $defaultClass = 'Database\ActiveRow')
+	public function __construct($classes = array(), $defaultClass = 'Fabik\Database\ActiveRow')
 	{
 		$this->classes = $classes;
 		$this->defaultClass = $defaultClass;

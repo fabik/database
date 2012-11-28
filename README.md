@@ -1,5 +1,5 @@
-Database
-========
+fabik/database
+==============
 
 This is a database layer for Nette Framework based on `Nette\Database`.
 
@@ -46,8 +46,8 @@ Get the source code using [Composer](http://getcomposer.org/) (add `"fabik/datab
 
 	services:
 		# database
-		modelManager: Database\ModelManager
-		rowFactory: Database\RowFactory({
+		modelManager: Fabik\Database\ModelManager
+		rowFactory: Fabik\Database\RowFactory({
 			articles: Blog\Article
 			users: Blog\User
 		})
@@ -63,8 +63,8 @@ Get the source code using [Composer](http://getcomposer.org/) (add `"fabik/datab
 	<?php
 
 	namespace Blog;
-	use Database\ActiveRow,
-		Database\Table;
+	use Fabik\Database\ActiveRow,
+		Fabik\Database\Table;
 
 
 
