@@ -63,6 +63,7 @@ Get the source code using [Composer](http://getcomposer.org/) (add `"fabik/datab
 	<?php
 
 	namespace Blog;
+
 	use Fabik\Database\ActiveRow,
 		Fabik\Database\Table;
 
