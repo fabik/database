@@ -2,7 +2,8 @@
 
 namespace Fabik\Database;
 
-use Nette\Object;
+use Nette\InvalidStateException,
+	Nette\Object;
 
 
 
@@ -20,20 +21,21 @@ abstract class Table extends Object
 
 	/**
 	 * @param  IModelManager
-	 * @throws Nette\InvalidStateException
 	 */
 	public function __construct(IModelManager $manager)
 	{
 		if (!isset($this->name)) {
 			$class = get_called_class();
-			throw new \Nette\InvalidStateException("Property \$name must be defined in $class.");
+			throw new InvalidStateException("Property \$name must be defined in $class.");
 		}
 		$this->manager = $manager;
 	}
 
 
 
-	/** @return Selection */
+	/**
+	 * @return Selection
+	 */
 	protected function getTable()
 	{
 		return new Selection($this->name, $this->manager);
@@ -70,7 +72,7 @@ abstract class Table extends Object
 	 * Finds a row by the given properties.
 	 * @param  string
 	 * @param  mixed...
-	 * @return ActiveRow|FALSE
+	 * @return \Nette\Database\Table\ActiveRow|FALSE
 	 */
 	public function findOneBy($where)
 	{
@@ -83,7 +85,7 @@ abstract class Table extends Object
 	/**
 	 * Finds a row by the primary key.
 	 * @param  mixed
-	 * @return ActiveRow|FALSE
+	 * @return \Nette\Database\Table\ActiveRow|FALSE
 	 */
 	public function find($key)
 	{
@@ -95,7 +97,7 @@ abstract class Table extends Object
 	/**
 	 * Creates and inserts a row to the database.
 	 * @param  mixed[]
-	 * @return ActiveRow
+	 * @return \Nette\Database\Table\ActiveRow
 	 * @throws DuplicateEntryException
 	 */
 	public function create($values)
@@ -119,7 +121,7 @@ abstract class Table extends Object
 	 * Creates and inserts a row to the database or updates an existing one.
 	 * @param  mixed[]
 	 * @param  mixed[]
-	 * @return ActiveRow
+	 * @return \Nette\Database\Table\ActiveRow
 	 */
 	public function createOrUpdate($uniqueKeys, $values = array())
 	{

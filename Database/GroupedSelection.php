@@ -2,6 +2,8 @@
 
 namespace Fabik\Database;
 
+use Nette\InvalidArgumentException;
+
 
 
 /**
@@ -17,7 +19,7 @@ class GroupedSelection extends \Nette\Database\Table\GroupedSelection implements
 
 
 	/**
-	 * @param  Nette\Database\Table\Selection
+	 * @param  \Nette\Database\Table\Selection
 	 * @param  string
 	 * @param  string
 	 */
@@ -25,7 +27,7 @@ class GroupedSelection extends \Nette\Database\Table\GroupedSelection implements
 	{
 		parent::__construct($refTable, $name, $column);
 		if (!$refTable instanceof IModelManagerAccessor) {
-			throw new \Nette\InvalidArgumentException('Argument $refTable must be a IModelManagerAccessor descendant.');
+			throw new InvalidArgumentException('Argument $refTable must be IModelManagerAccessor descendant.');
 		}
 		$this->manager = $this->refTable->getModelManager();
 	}
@@ -47,7 +49,7 @@ class GroupedSelection extends \Nette\Database\Table\GroupedSelection implements
 	/**
 	 * Creates a new row.
 	 * @param  mixed[]
-	 * @return Nette\Database\Table\ActiveRow
+	 * @return \Nette\Database\Table\ActiveRow
 	 */
 	protected function createRow(array $data)
 	{
@@ -59,7 +61,7 @@ class GroupedSelection extends \Nette\Database\Table\GroupedSelection implements
 	/**
 	 * Creates a selection.
 	 * @param  string
-	 * @return Nette\Database\Table\Selection
+	 * @return Selection
 	 */
 	protected function createSelectionInstance($table = NULL)
 	{
@@ -72,7 +74,7 @@ class GroupedSelection extends \Nette\Database\Table\GroupedSelection implements
 	 * Creates a new grouped selection.
 	 * @param  string
 	 * @param  string
-	 * @return Nette\Database\Table\GroupedSelection
+	 * @return GroupedSelection
 	 */
 	protected function createGroupedSelectionInstance($table, $column)
 	{

@@ -36,8 +36,8 @@ class RowFactory extends Object implements IRowFactory
 	/**
 	 * Creates a new row.
 	 * @param  mixed[]
-	 * @param  Nette\Database\Table\Selection
-	 * @return Nette\Database\Table\ActiveRow
+	 * @param  \Nette\Database\Table\Selection
+	 * @return \Nette\Database\Table\ActiveRow
 	 */
 	public function createRow(array $data, \Nette\Database\Table\Selection $table)
 	{

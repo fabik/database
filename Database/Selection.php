@@ -43,7 +43,7 @@ class Selection extends \Nette\Database\Table\Selection implements IModelManager
 	/**
 	 * Creates a new row.
 	 * @param  mixed[]
-	 * @return Nette\Database\Table\ActiveRow
+	 * @return \Nette\Database\Table\ActiveRow
 	 */
 	protected function createRow(array $data)
 	{
@@ -55,7 +55,7 @@ class Selection extends \Nette\Database\Table\Selection implements IModelManager
 	/**
 	 * Creates a selection.
 	 * @param  string
-	 * @return Nette\Database\Table\Selection
+	 * @return Selection
 	 */
 	protected function createSelectionInstance($table = NULL)
 	{
@@ -68,7 +68,7 @@ class Selection extends \Nette\Database\Table\Selection implements IModelManager
 	 * Creates a new grouped selection.
 	 * @param  string
 	 * @param  string
-	 * @return Nette\Database\Table\GroupedSelection
+	 * @return GroupedSelection
 	 */
 	protected function createGroupedSelectionInstance($table, $column)
 	{

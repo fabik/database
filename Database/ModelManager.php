@@ -17,25 +17,25 @@ use Nette\Caching\IStorage,
  */
 class ModelManager extends Object implements IModelManager
 {
-	/** @param Nette\Database\Connection */
+	/** @param \Nette\Database\Connection */
 	protected $connection;
 
 	/** @param IRowFactory */
 	protected $rowFactory;
 
-	/** @param Nette\Database\IReflection */
+	/** @param \Nette\Database\IReflection */
 	protected $reflection;
 
-	/** @param Nette\Caching\IStorage */
+	/** @param \Nette\Caching\IStorage */
 	protected $cacheStorage;
 
 
 
 	/**
-	 * @param  Nette\Database\Connection
+	 * @param  \Nette\Database\Connection
 	 * @param  IRowFactory
-	 * @param  Nette\Database\IReflection|NULL
-	 * @param  Nette\Caching\IStorage
+	 * @param  \Nette\Database\IReflection|NULL
+	 * @param  \Nette\Caching\IStorage
 	 */
 	public function __construct(Connection $connection, IRowFactory $rowFactory, IReflection $reflection = NULL, IStorage $cacheStorage)
 	{
@@ -47,7 +47,7 @@ class ModelManager extends Object implements IModelManager
 
 
 
-	/** @return Nette\Database\Connection */
+	/** @return \Nette\Database\Connection */
 	public function getConnection()
 	{
 		return $this->connection;
@@ -63,7 +63,7 @@ class ModelManager extends Object implements IModelManager
 
 
 
-	/** @return Nette\Database\IReflection */
+	/** @return \Nette\Database\IReflection */
 	public function getDatabaseReflection()
 	{
 		return $this->reflection;
@@ -71,7 +71,7 @@ class ModelManager extends Object implements IModelManager
 
 
 
-	/** @return Nette\Caching\IStorage */
+	/** @return \Nette\Caching\IStorage */
 	public function getCacheStorage()
 	{
 		return $this->cacheStorage;
