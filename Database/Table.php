@@ -2,7 +2,8 @@
 
 namespace Fabik\Database;
 
-use Nette\InvalidStateException,
+use Nette\InvalidArgumentException,
+	Nette\InvalidStateException,
 	Nette\Object;
 
 
@@ -152,6 +153,43 @@ abstract class Table extends Object
 			);
 
 			return $this->findOneBy($uniqueKeys);
+		}
+	}
+
+
+
+	/**
+	 * Saves the given a row to the database.
+	 * @param  mixed[]|\Traversable
+	 * @return \Nette\Database\Table\ActiveRow
+	 * @throws \Nette\InvalidArgumentException
+	 */
+	public function save($row)
+	{
+		if ($row instanceof \Nette\Database\Table\ActiveRow && $row->getTable()->getConnection() === $this->manager->getConnection()) {
+			return $row->update();
+
+		} elseif ($row instanceof \Traversable) {
+			$data = iterator_to_array($row);
+
+		} elseif (is_array($row)) {
+			$data = $row;
+
+		} else {
+			throw new InvalidArgumentException('Argument must be an array or Traversable descendant.');
+		}
+
+		$selection = $this->getTable();
+
+		if (isset($data[$selection->getPrimary()])) {
+			$row = $selection->find($data[$selection->getPrimary()]);
+			foreach ($data as $key => $val) {
+				$row->$key = $val;
+			}
+			return $row->update();
+			
+		} else {
+			return $selection->insert($data);
 		}
 	}
 
