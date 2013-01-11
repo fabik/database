@@ -11,6 +11,7 @@
 spl_autoload_register(function ($type) {
 	static $paths = array(
 		'fabik\database\activerow' => 'ActiveRow.php',
+		'fabik\database\databaseextension' => 'DatabaseExtension.php',
 		'fabik\database\duplicateentryexception' => 'exceptions.php',
 		'fabik\database\groupedselection' => 'GroupedSelection.php',
 		'fabik\database\imodelmanager' => 'IModelManager.php',

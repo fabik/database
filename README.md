@@ -34,7 +34,17 @@ Get the source code using [Composer](http://getcomposer.org/) (add `"fabik/datab
 	) ENGINE=InnoDB;
 	```
 
-2. Add the following sections to your `config.neon` file:
+2. Register the compiler extension in the bootstrapper.
+
+	```php
+	use Fabik\Database\DatabaseExtension;
+
+	$configurator->onCompile[] = function($configurator, $compiler) {
+		$compiler->addExtension('database', new DatabaseExtension);
+	};
+	```
+
+3. Add the following sections to your `config.neon` file:
 
 	```neon
 	nette:
@@ -44,15 +54,13 @@ Get the source code using [Composer](http://getcomposer.org/) (add `"fabik/datab
 				user: %database.user%
 				password: %database.password%
 
-	services:
-		# database
-		modelManager: Fabik\Database\ModelManager
-		rowFactory: Fabik\Database\RowFactory({
-			articles: Blog\Article
-			users: Blog\User
-		})
+	database:
+		rowFactory:
+			classes:
+				articles: Blog\Article
+				users: Blog\User
 
-		# models
+	services:
 		articles: Blog\Articles
 		users: Blog\Users
 	```
