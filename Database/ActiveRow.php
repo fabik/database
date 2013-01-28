@@ -74,4 +74,29 @@ class ActiveRow extends \Nette\Database\Table\ActiveRow
 		}
 		return $name;
 	}
+
+
+
+	/**
+	 * Gets column value.
+	 * @param  string
+	 * @return string
+	 */
+	public function getColumnValue($name)
+	{
+		return parent::__get($name);
+	}
+
+
+
+	/**
+	 * Sets column value.
+	 * @param  string
+	 * @param  string
+	 * @return void
+	 */
+	public function setColumnValue($name, $value)
+	{
+		parent::__set($name, $value);
+	}
 }
