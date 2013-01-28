@@ -2,7 +2,8 @@
 
 namespace Fabik\Database;
 
-use Nette\ObjectMixin;
+use Nette\ObjectMixin,
+	Nette\Utils\Strings;
 
 
 
@@ -15,8 +16,9 @@ class ActiveRow extends \Nette\Database\Table\ActiveRow
 {
 	public function &__get($key)
 	{
-		if (parent::__isset($key) || !ObjectMixin::has($this, $key)) {
-			return parent::__get($key);
+		$column = $this->formatColumnName($key);
+		if (parent::__isset($column) || !ObjectMixin::has($this, $key)) {
+			return parent::__get($column);
 		} else {
 			return ObjectMixin::get($this, $key);
 		}
@@ -26,8 +28,9 @@ class ActiveRow extends \Nette\Database\Table\ActiveRow
 
 	public function __set($key, $value)
 	{
-		if (parent::__isset($key) || !ObjectMixin::has($this, $key)) {
-			parent::__set($key, $value);
+		$column = $this->formatColumnName($key);
+		if (parent::__isset($column) || !ObjectMixin::has($this, $key)) {
+			parent::__set($column, $value);
 		} else {
 			ObjectMixin::set($this, $key, $value);
 		}
@@ -37,17 +40,38 @@ class ActiveRow extends \Nette\Database\Table\ActiveRow
 
 	public function __isset($key)
 	{
-		return parent::__isset($key) || ObjectMixin::has($this, $key);
+		$column = $this->formatColumnName($key);
+		return parent::__isset($column) || ObjectMixin::has($this, $key);
 	}
 
 
 
 	public function __unset($key)
 	{
-		if (parent::__isset($key) || !ObjectMixin::has($this, $key)) {
-			parent::__unset($key);
+		$column = $this->formatColumnName($key);
+		if (parent::__isset($column) || !ObjectMixin::has($this, $key)) {
+			parent::__unset($column);
 		} else {
 			ObjectMixin::remove($this, $key);
 		}
+	}
+
+
+
+	/**
+	 * Formats column name.
+	 * @param  string
+	 * @return string
+	 */
+	public function formatColumnName($key)
+	{
+		static $cache = array();
+		$name = & $cache[$key];
+		if ($name === NULL) {
+			$name = Strings::replace($key, '#[A-Z]#', function ($match) {
+				return '_' . strtolower($match[0]);
+			});
+		}
+		return $name;
 	}
 }
