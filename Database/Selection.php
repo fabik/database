@@ -57,7 +57,7 @@ class Selection extends \Nette\Database\Table\Selection implements IModelManager
 	 * @param  string
 	 * @return Selection
 	 */
-	protected function createSelectionInstance($table = NULL)
+	public function createSelectionInstance($table = NULL)
 	{
 		return new Selection($table ?: $this->name, $this->manager);
 	}
