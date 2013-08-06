@@ -2,7 +2,7 @@
 
 namespace Fabik\Database;
 
-use Nette\Config\CompilerExtension;
+use Nette\DI\CompilerExtension;
 
 
 
